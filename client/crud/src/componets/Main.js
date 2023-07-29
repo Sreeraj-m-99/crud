@@ -1,9 +1,13 @@
 import React from 'react'
+import ViewEmployees from './ViewEmployees'
 import AddForm from './AddForm'
 
-function Main() {
-  return (
-    <><AddForm/></>
+const Main = () => {
+  return (<>
+    
+    <ViewEmployees/>
+    {/* <AddForm/> */}
+    </>
   )
 }
 
