@@ -36,6 +36,21 @@ export const getAllEmployee = createAsyncThunk(
   }
 );
 
+export const deleteEmployeeById = createAsyncThunk(
+  "employees/deleteById",
+  async (employeeId) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3700/api/employees/${employeeId}`
+      );
+      console.log("response is1", response);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.message); // Use error.message instead of error.data.message
+    }
+  }
+);
+
 const employeeSlice = createSlice({
   name: "employee",
   initialState,
@@ -61,9 +76,28 @@ const employeeSlice = createSlice({
       .addCase(getAllEmployee.fulfilled, (state, action) => {
         state.loading = false;
         state.employees = action.payload;
-
       })
       .addCase(getAllEmployee.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(deleteEmployeeById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteEmployeeById.fulfilled, (state, action) => {
+        state.loading = false;
+        console.log("Response from server:", action.payload);
+        // Add a check to see if the payload has the expected data structure
+        if (action.payload && action.payload._id) {
+          state.employees = state.employees.filter(
+            (employee) => employee._id !== action.payload._id
+          );
+        } else {
+          console.error("Invalid payload format:", action.payload);
+        }
+      })
+      .addCase(deleteEmployeeById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

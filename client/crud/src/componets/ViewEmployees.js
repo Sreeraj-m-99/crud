@@ -7,22 +7,21 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { getAllEmployee } from "../reducers/employeeSlice";
+import { getAllEmployee, deleteEmployeeById } from "../reducers/employeeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import DeleteIcon from '@mui/icons-material/Delete';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-const ViewEmployees = () => {
+const ViewEmployees = ({ employeeId }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getAllEmployee());
-    console.log("dispatched data ",dispatch)
+    console.log("dispatched data ", dispatch);
   }, [dispatch]);
 
-  
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -44,10 +43,15 @@ const ViewEmployees = () => {
     },
   }));
 
-  
-
   const employees = useSelector((state) => state?.employee?.employees);
   console.log("employees are", employees);
+
+  const deleteData = (employeeId) => {
+    console.log("employeeId is",employeeId)
+    console.log("Dispatch function:", dispatch);
+    dispatch(deleteEmployeeById(employeeId));
+    console.log("hai");
+  };
   return (
     <>
       <TableContainer component={Paper}>
@@ -64,16 +68,29 @@ const ViewEmployees = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {employees.map((employee)=>(
-            <StyledTableRow key={employee._id}>
-              <StyledTableCell align="left">{employee.name}</StyledTableCell>
-              <StyledTableCell align="left">{employee.email}</StyledTableCell>
-              <StyledTableCell align="left">{employee.phone}</StyledTableCell>
-              <StyledTableCell align="left">{employee.age}</StyledTableCell>
-              <StyledTableCell align="left">{employee.designation}</StyledTableCell>
-              <StyledTableCell align="left">{employee.salary}</StyledTableCell>
-              <StyledTableCell sx={{display:'flex',justifyContent:'space-evenly'}}><VisibilityIcon color="success"/> <BorderColorIcon color="primary"/> <DeleteIcon sx={{ color: '#f10c45' }} /></StyledTableCell>
-            </StyledTableRow>
+            {employees.map((employee) => (
+              <StyledTableRow key={employee._id}>
+                <StyledTableCell align="left">{employee.name}</StyledTableCell>
+                <StyledTableCell align="left">{employee.email}</StyledTableCell>
+                <StyledTableCell align="left">{employee.phone}</StyledTableCell>
+                <StyledTableCell align="left">{employee.age}</StyledTableCell>
+                <StyledTableCell align="left">
+                  {employee.designation}
+                </StyledTableCell>
+                <StyledTableCell align="left">
+                  {employee.salary}
+                </StyledTableCell>
+                <StyledTableCell
+                  sx={{ display: "flex", justifyContent: "space-evenly" }}
+                >
+                  <VisibilityIcon color="success" />{" "}
+                  <BorderColorIcon color="primary" />{" "}
+                  <DeleteIcon
+                    sx={{ color: "#f10c45" }}
+                    onClick={() => deleteData(employee._id)}
+                  />
+                </StyledTableCell>
+              </StyledTableRow>
             ))}
           </TableBody>
         </Table>
