@@ -28,7 +28,7 @@ export const getAllEmployee = createAsyncThunk(
   async () => {
     try {
       const response = await axios.get("http://localhost:3700/api/employees");
-      console.log("response is", response);
+
       return response.data;
     } catch (error) {
       throw new Error(error.data.message);
@@ -43,13 +43,44 @@ export const deleteEmployeeById = createAsyncThunk(
       const response = await axios.delete(
         `http://localhost:3700/api/employees/${employeeId}`
       );
-      console.log("response is1", response);
+
       return response.data;
     } catch (error) {
-      throw new Error(error.message); // Use error.message instead of error.data.message
+      throw new Error(error.message);
     }
   }
 );
+
+export const getEmployeeByID = createAsyncThunk(
+  "employees/getEmployeeByID",
+  async (employeeId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3700/api/employees/${employeeId}`
+      );
+      console.log("response for get employee by id", response);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+);
+
+export const updateEmployeeById = createAsyncThunk(
+  "employees/updateEmployeeById",
+  async (employeeId) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3700/api/employees/${employeeId}`
+      );
+      console.log("response for update employee by id", response);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+);
+
 
 const employeeSlice = createSlice({
   name: "employee",
@@ -88,7 +119,6 @@ const employeeSlice = createSlice({
       .addCase(deleteEmployeeById.fulfilled, (state, action) => {
         state.loading = false;
         console.log("Response from server:", action.payload);
-        // Add a check to see if the payload has the expected data structure
         if (action.payload && action.payload._id) {
           state.employees = state.employees.filter(
             (employee) => employee._id !== action.payload._id
@@ -100,7 +130,31 @@ const employeeSlice = createSlice({
       .addCase(deleteEmployeeById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
-      });
+      })
+      .addCase(getEmployeeByID.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getEmployeeByID.fulfilled, (state, action) => {
+        state.loading = false;
+        state.employees = action.payload;
+      })
+      .addCase(getEmployeeByID.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(updateEmployeeById.pending,(state)=>{
+        state.loading=true
+        state.error=null
+      })
+      .addCase(updateEmployeeById.fulfilled,(state,action)=>{
+        state.loading=false
+        state.employees=action.payload
+      })
+      .addCase(updateEmployeeById.rejected,(state,action)=>{
+        state.loading=false
+        state.error=action.error.message
+      })
   },
 });
 
