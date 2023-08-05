@@ -68,12 +68,12 @@ export const getEmployeeByID = createAsyncThunk(
 
 export const updateEmployeeById = createAsyncThunk(
   "employees/updateEmployeeById",
-  async (employeeId) => {
+  async ({values,employeeId}) => {
     try {
       const response = await axios.put(
-        `http://localhost:3700/api/employees/${employeeId}`
+        `http://localhost:3700/api/employees/${employeeId}`,values
       );
-      console.log("response for update employee by id", response);
+      console.log("response for update employees by id", response);
       return response.data;
     } catch (error) {
       throw new Error(error.message);

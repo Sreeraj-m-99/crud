@@ -19,6 +19,7 @@ import BorderColorIcon from "@mui/icons-material/BorderColor";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Modal } from "@mui/material";
 import GetEmployeeById from "./GetEmployeeById";
+import UpdateEmployeeById from "./UpdateEmployeeById";
 
 const ViewEmployees = ({ employeeId }) => {
   const dispatch = useDispatch();
@@ -69,6 +70,16 @@ const ViewEmployees = ({ employeeId }) => {
     setOpen(false);
   };
 
+  const [updateOpen, setUpdateOpen] = React.useState(false);
+  const [employeeAsProps, setEmployeeAsProps] = React.useState(null);
+  const updateEmployeeOpen = (employee) => {
+    setUpdateOpen(true);
+    setEmployeeAsProps(employee);
+  };
+
+  const updateEmployeeClose = () => {
+    setUpdateOpen(false);
+  };
 
   return (
     <>
@@ -113,7 +124,10 @@ const ViewEmployees = ({ employeeId }) => {
                       onClick={() => handleOpen(employee)}
                     />
 
-                    <BorderColorIcon color="primary" />
+                    <BorderColorIcon
+                      color="primary"
+                      onClick={() => updateEmployeeOpen(employee)}
+                    />
                     <DeleteIcon
                       sx={{ color: "#f10c45" }}
                       onClick={() => deleteData(employee._id)}
@@ -124,6 +138,16 @@ const ViewEmployees = ({ employeeId }) => {
           </TableBody>
         </Table>
       </TableContainer>
+      {employeeAsProps && (
+        <Modal
+          open={updateOpen}
+          onClose={updateEmployeeClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <UpdateEmployeeById employee={employeeAsProps} />
+        </Modal>
+      )}
       {selectedEmployee && (
         <Modal
           open={open}
@@ -134,8 +158,6 @@ const ViewEmployees = ({ employeeId }) => {
           <GetEmployeeById employee={selectedEmployee} />
         </Modal>
       )}
-
-      
     </>
   );
 };
