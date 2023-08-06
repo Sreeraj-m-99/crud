@@ -6,6 +6,7 @@ import styled from "@emotion/styled";
 import { getAllEmployee, updateEmployeeById } from "../reducers/employeeSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -42,8 +43,9 @@ const validationSchema = Yup.object({
     .required("Salary is required"),
 });
 
-const UpdateEmployeeById = React.memo(({ employee })  => {
-  const dispatch=useDispatch()
+const UpdateEmployeeById = React.memo(({ employee, onClose }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { handleSubmit, handleChange, handleBlur, values, touched, errors } =
     useFormik({
@@ -58,13 +60,17 @@ const UpdateEmployeeById = React.memo(({ employee })  => {
       validationSchema: validationSchema,
       onSubmit: async (values) => {
         console.log("values are", values);
-        try{
-         const actionResult=await dispatch(updateEmployeeById({values:values,employeeId:employee._id}))
-         const response= unwrapResult(actionResult)
-         console.log("response of update employee is",response)
-         dispatch(getAllEmployee())
-        }catch(error){
-          console.error("error message",error)
+        try {
+          const actionResult = await dispatch(
+            updateEmployeeById({ values: values, employeeId: employee._id })
+          );
+          const response = unwrapResult(actionResult);
+          console.log("response of update employee is", response);
+          dispatch(getAllEmployee());
+
+          onClose();
+        } catch (error) {
+          console.error("error message", error);
         }
       },
     });
@@ -187,14 +193,14 @@ const UpdateEmployeeById = React.memo(({ employee })  => {
             />
           </Grid>
           <Grid item xs={12}>
-          <Button
-            variant="contained"
-            type="submit"
-            sx={{ backgroundColor: "#2aa0ca" }}
-          >
-            Submit
-          </Button>
-        </Grid>
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{ backgroundColor: "#2aa0ca" }}
+            >
+              Submit
+            </Button>
+          </Grid>
         </Grid>
       </form>
     </>

@@ -17,9 +17,34 @@ import { useEffect } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Modal } from "@mui/material";
+import { Box, Grid, Modal, Typography } from "@mui/material";
 import GetEmployeeById from "./GetEmployeeById";
 import UpdateEmployeeById from "./UpdateEmployeeById";
+import AddIcon from "@mui/icons-material/Add";
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+import AddForm from "./AddForm";
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
+const BootstrapTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(() => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: "#1699D7",
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: " #1699D7",
+  },
+}));
 
 const ViewEmployees = ({ employeeId }) => {
   const dispatch = useDispatch();
@@ -31,7 +56,7 @@ const ViewEmployees = ({ employeeId }) => {
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
+      backgroundColor: '#3b444b ' ,
       color: theme.palette.common.white,
     },
     [`&.${tableCellClasses.body}`]: {
@@ -81,6 +106,10 @@ const ViewEmployees = ({ employeeId }) => {
     setUpdateOpen(false);
   };
 
+  const [open1, setOpen1] = React.useState(false);
+  const handleOpen1 = () => setOpen1(true);
+  const handleClose1 = () => setOpen1(false);
+
   return (
     <>
       <TableContainer component={Paper}>
@@ -93,7 +122,19 @@ const ViewEmployees = ({ employeeId }) => {
               <StyledTableCell align="left">Age</StyledTableCell>
               <StyledTableCell align="left">Designation</StyledTableCell>
               <StyledTableCell align="left">Salary</StyledTableCell>
-              <StyledTableCell align="left">Actions</StyledTableCell>
+              <StyledTableCell
+                align="left"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  columnGap: "13px",
+                }}
+              >
+                Actions
+                <BootstrapTooltip title="Add">
+                  <AddIcon onClick={handleOpen1} />
+                </BootstrapTooltip>
+              </StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -117,21 +158,26 @@ const ViewEmployees = ({ employeeId }) => {
                     {employee.salary}
                   </StyledTableCell>
                   <StyledTableCell
-                    sx={{ display: "flex", justifyContent: "space-evenly" }}
+                    sx={{ display: "flex", justifyContent: "space-evenly",gap:'14px' }}
                   >
-                    <VisibilityIcon
-                      color="success"
-                      onClick={() => handleOpen(employee)}
-                    />
-
-                    <BorderColorIcon
-                      color="primary"
-                      onClick={() => updateEmployeeOpen(employee)}
-                    />
-                    <DeleteIcon
-                      sx={{ color: "#f10c45" }}
-                      onClick={() => deleteData(employee._id)}
-                    />
+                    <BootstrapTooltip title="View">
+                      <VisibilityIcon
+                        color="success"
+                        onClick={() => handleOpen(employee)}
+                      />
+                    </BootstrapTooltip>
+                    <BootstrapTooltip title="Edit">
+                      <BorderColorIcon
+                        color="primary"
+                        onClick={() => updateEmployeeOpen(employee)}
+                      />
+                    </BootstrapTooltip>
+                    <BootstrapTooltip title="Delete">
+                      <DeleteIcon
+                        sx={{ color: "#f10c45" }}
+                        onClick={() => deleteData(employee._id)}
+                      />
+                    </BootstrapTooltip>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
@@ -145,7 +191,7 @@ const ViewEmployees = ({ employeeId }) => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <UpdateEmployeeById employee={employeeAsProps} />
+          <UpdateEmployeeById employee={employeeAsProps}  onClose={updateEmployeeClose}/>
         </Modal>
       )}
       {selectedEmployee && (
@@ -156,6 +202,18 @@ const ViewEmployees = ({ employeeId }) => {
           aria-describedby="modal-modal-description"
         >
           <GetEmployeeById employee={selectedEmployee} />
+        </Modal>
+      )}
+      {open1 && (
+        <Modal
+          open={open1}
+          onClose={handleClose1}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Grid container sx={style}>
+            <AddForm handleClose1={handleClose1}/>
+          </Grid>
         </Modal>
       )}
     </>

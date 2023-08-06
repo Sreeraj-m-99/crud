@@ -8,6 +8,8 @@ import {createEmployee} from '../reducers/employeeSlice'
 import { useDispatch } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
 
+
+
 const StyledHelperText = styled("div")({
   color: "red",
   fontSize: "12px",
@@ -31,7 +33,7 @@ const validationSchema = Yup.object({
     .required("Salary is required"),
 });
 
-const AddForm = () => {
+const AddForm = ({handleClose1}) => {
 
   const dispatch = useDispatch();
   const { handleSubmit, handleChange, handleBlur,values, touched, errors } = useFormik({
@@ -50,15 +52,16 @@ const AddForm = () => {
        const actionResult=await dispatch(createEmployee(values))
        const response= unwrapResult(actionResult)
        console.log("response of add employee is",response)
+       handleClose1()
       }catch(error){
-        console.error("error message",error)
+        console.error("error message",error.message)
       }
     },
   });
 
   return (
     <form onSubmit={handleSubmit}>
-      <Grid container spacing={2} sx={{ margin: "auto" }}>
+      <Grid container spacing={2} >
         <Grid item xs={12}>
           <TextField
             id="outlined-basic"

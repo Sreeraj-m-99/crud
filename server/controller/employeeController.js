@@ -9,7 +9,7 @@ const createEmployee = async (req, res) => {
     console.log(employee);
     res.status(200).json(employee);
   } catch (error) {
-    res.status(400).json({ error: "invalid input" });
+    res.status(400).json({ error: error.message });
   }
 };
 
