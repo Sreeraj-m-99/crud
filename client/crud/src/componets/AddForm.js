@@ -1,14 +1,25 @@
 import React from "react";
 import * as Yup from "yup";
 import Grid from "@mui/material/Grid";
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import styled from "@emotion/styled";
-import {createEmployee} from '../reducers/employeeSlice'
+import { createEmployee } from "../reducers/employeeSlice";
 import { useDispatch } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 
-
+const BootstrapTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(() => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: "	#6082B6",
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: " 	#6082B6",
+  },
+}));
 
 const StyledHelperText = styled("div")({
   color: "red",
@@ -20,7 +31,9 @@ const validationSchema = Yup.object({
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
-  phone: Yup.string().required("Phone number is required"),
+  phone: Yup.string()
+    .required("Phone number is required")
+    .matches(/^\d{10}$/, "Phone number must be exactly 10 digits"),
   age: Yup.number()
     .typeError("Age must be a number")
     .min(18, "Must be at least 18 years old")
@@ -33,35 +46,68 @@ const validationSchema = Yup.object({
     .required("Salary is required"),
 });
 
-const AddForm = ({handleClose1}) => {
-
+const AddForm = ({ handleClose1 }) => {
   const dispatch = useDispatch();
-  const { handleSubmit, handleChange, handleBlur,values, touched, errors } = useFormik({
-    initialValues: {
-      name: "",
-      email: "",
-      phone: "",
-      age: "",
-      designation: "",
-      salary: "",
-    },
-    validationSchema: validationSchema,
-    onSubmit: async (values) => {
-      console.log("values are", values);
-      try{
-       const actionResult=await dispatch(createEmployee(values))
-       const response= unwrapResult(actionResult)
-       console.log("response of add employee is",response)
-       handleClose1()
-      }catch(error){
-        console.error("error message",error.message)
-      }
-    },
-  });
+  const { handleSubmit, handleChange, handleBlur, values, touched, errors } =
+    useFormik({
+      initialValues: {
+        name: "",
+        email: "",
+        phone: "",
+        age: "",
+        designation: "",
+        salary: "",
+      },
+      validationSchema: validationSchema,
+      onSubmit: async (values) => {
+        console.log("values are", values);
+        try {
+          const actionResult = await dispatch(createEmployee(values));
+          const response = unwrapResult(actionResult);
+          console.log("response of add employee is", response);
+          handleClose1();
+        } catch (error) {
+          console.error("error message", error.message);
+        }
+      },
+    });
+  const cancelPresentationIcon = () => {
+    handleClose1();
+  };
 
   return (
     <form onSubmit={handleSubmit}>
-      <Grid container spacing={2} >
+      <Grid container spacing={2}>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            justifyContent: "end",
+            marginTop: "",
+            color: "#FF7518",
+          }}
+        >
+          <BootstrapTooltip title="close">
+            {" "}
+            <CancelPresentationIcon onClick={cancelPresentationIcon} />
+          </BootstrapTooltip>
+        </Grid>
+        <Grid item xs={12} sx={{ display: "flex", justifyContent: "start" }}>
+          <Typography
+            variant="h6"
+            sx={{
+              background: "#121FCF",
+              backgroundImage:
+                "linear-gradient(to right, #121FCF 0%, #CF1512 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              marginBottom: "18px",
+            }}
+          >
+            Add Employee Details
+          </Typography>
+        </Grid>
         <Grid item xs={12}>
           <TextField
             id="outlined-basic"
@@ -182,7 +228,7 @@ const AddForm = ({handleClose1}) => {
             type="submit"
             sx={{ backgroundColor: "#2aa0ca" }}
           >
-            Submit
+            Add
           </Button>
         </Grid>
       </Grid>

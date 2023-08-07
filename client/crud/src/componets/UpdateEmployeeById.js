@@ -7,6 +7,19 @@ import { getAllEmployee, updateEmployeeById } from "../reducers/employeeSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+
+const BootstrapTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(() => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: "	#6082B6",
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: " 	#6082B6",
+  },
+}));
 
 const style = {
   position: "absolute",
@@ -18,6 +31,9 @@ const style = {
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
+};
+style['@media (max-width: 600px)'] = {
+  width: '80%',
 };
 
 const StyledHelperText = styled("div")({
@@ -74,10 +90,43 @@ const UpdateEmployeeById = React.memo(({ employee, onClose }) => {
         }
       },
     });
+  const cancelPresentationIcon = () => {
+    onClose();
+  };
   return (
     <>
       <form onSubmit={handleSubmit}>
         <Grid container sx={style} spacing={3}>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: "end",
+              marginTop: "",
+              color: "#FF7518",
+              
+            }}
+          >
+            <BootstrapTooltip title="close">
+              <CancelPresentationIcon onClick={cancelPresentationIcon} />
+            </BootstrapTooltip>
+          </Grid>
+          <Grid item xs={12} sx={{ display: "flex", justifyContent: "start" }}>
+            <Typography
+              variant="h6"
+              sx={{
+                background: "#121FCF",
+                backgroundImage:
+                  "linear-gradient(to right, #121FCF 0%, #CF1512 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Update Employee Details
+            </Typography>
+          </Grid>
+
           <Grid item xs={12}>
             <TextField
               id="outlined-basic"
@@ -198,7 +247,7 @@ const UpdateEmployeeById = React.memo(({ employee, onClose }) => {
               type="submit"
               sx={{ backgroundColor: "#2aa0ca" }}
             >
-              Submit
+              Update
             </Button>
           </Grid>
         </Grid>
