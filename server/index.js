@@ -22,6 +22,10 @@ app.use(cors());
 
 app.use("/api/employees", employeeRoutes);
 
+app.get('/', (req, res) => {
+  res.send('Hello, Sreeraj!');
+});
+
 mongoose
   .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
