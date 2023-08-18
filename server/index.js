@@ -10,9 +10,13 @@ const mongoose = require("mongoose");
 
 const employeeRoutes = require("./routes/employeeRoutes");
 
-const url = "mongodb://0.0.0.0:27017/Employee";
+const dotenv = require("dotenv"); 
 
-PORT = 3700;
+dotenv.config({ path: "./config.env" }); 
+
+const url = process.env.DATABASE; 
+
+const Port = process.env.PORT;
 
 app.use(cors());
 
@@ -22,8 +26,8 @@ mongoose
   .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log(`mongodb connected sucessfully`);
-    app.listen(PORT, () => {
-      console.log("server is running at port", PORT);
+    app.listen(Port, () => {
+      console.log("server is running at port", Port);
     });
   })
   .catch((error) => {
